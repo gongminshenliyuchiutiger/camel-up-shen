@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camel Up Shen</title>
+  
+  <!-- Font Awesome 6 圖示庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Google Fonts 思源黑體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 頂部功能列 -->
+  <header class="game-header">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="fa-solid fa-shapes"></i></div>
+      <div class="logo-text">
+        <h1 class="main-title"><i class="fa-solid fa-horse-head"></i> Camel Up Shen</h1>
+      </div>
+    </div>
+    
+    <div class="header-controls">
+      <button id="btn-player-setup" class="btn-tool" title="設定參賽人數與電腦配置">
+        <i class="fa-solid fa-users-gear"></i> <span>玩家人數</span>
+      </button>
+      <button id="btn-how-to-play" class="btn-tool" title="遊戲規則說明">
+        <i class="fa-solid fa-book-open"></i> <span>規則說明</span>
+      </button>
+      <button id="btn-sound-toggle" class="btn-tool" title="開關音效">
+        <i class="fa-solid fa-volume-high"></i> <span id="sound-status-text">音效: 開</span>
+      </button>
+      <button id="btn-restart" class="btn-tool btn-danger-soft" title="重啟遊戲">
+        <i class="fa-solid fa-rotate-right"></i> <span>重啟新局</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 桌遊版圖主舞台 -->
+  <main class="boardgame-stage">
+
+    <!-- 頂端局勢即時指示器 -->
+    <section class="game-status-bar">
+      <div class="status-chip turn-chip">
+        <i class="fa-solid fa-user-ninja"></i>
+        <span class="chip-label">當前玩家：</span>
+        <strong id="current-player-display" class="chip-value">玩家 1 (你)</strong>
+      </div>
+      <div class="status-chip dice-chip">
+        <i class="fa-solid fa-dice-d6"></i>
+        <span class="chip-label">分段骰盅：</span>
+        <strong id="leg-dice-progress" class="chip-value">剩餘 5 / 5 顆</strong>
+      </div>
+      <div class="status-chip leader-chip">
+        <i class="fa-solid fa-crown"></i>
+        <span class="chip-label">目前領先：</span>
+        <strong id="current-leader-display" class="chip-value">準備起跑</strong>
+      </div>
+      <div class="status-chip race-chip">
+        <i class="fa-solid fa-flag-checkered"></i>
+        <span class="chip-label">狀態：</span>
+        <strong id="game-status-text" class="chip-value">比賽進行中</strong>
+      </div>
+    </section>
+
+    <!-- 實體桌遊風格：中央核心遊戲圖板 (Main Board) -->
+    <div class="boardgame-table">
+      
+      <!-- 桌遊左側側板：分段下注彩票板塊展示架 (Leg Bet Tiles) -->
+      <aside class="board-side-panel board-left-panel">
+        <div class="panel-header">
+          <h3><i class="fa-solid fa-ticket"></i> 分段彩票區</h3>
+          <span class="panel-subtitle">預測分段第1名</span>
+        </div>
+        <div class="leg-tiles-rack" id="leg-tiles-market">
+          <!-- 5 色彩票由 JavaScript 動態生成卡牌堆疊 -->
+        </div>
+      </aside>
+
+      <!-- 桌遊中央版圖：環形賽道環繞金字塔 (The Circuit & Pyramid Center) -->
+      <section class="board-center-track">
+        
+        <!-- 跑道上環：第 1 格 (起點) ~ 第 6 格 -->
+        <div class="track-row track-top-row" id="track-row-top">
+          <!-- 由 JS 渲染第 1 ~ 6 格 -->
+        </div>
+
+        <!-- 跑道中段：包含左翼賽道、中央金字塔沙丘核心、右翼賽道 -->
+        <div class="track-middle-section">
+          <!-- 左翼賽道：第 16 格 (終點線) 與 第 15 格 -->
+          <div class="track-column track-left-col" id="track-col-left">
+            <!-- 由 JS 渲染第 16, 15 格 -->
+          </div>
+
+          <!-- 中央金字塔與擲骰核心 (Pyramid Sandbox) -->
+          <div class="pyramid-centerpiece" id="pyramid-centerpiece">
+            <div class="pyramid-tent-label">
+              <i class="fa-solid fa-mountain"></i> 巨型金字塔骰盅
+            </div>
+
+            <!-- 金字塔 3D 視覺模型與出骰口 -->
+            <div class="pyramid-3d-wrapper" id="pyramid-interactive-trigger">
+              <div class="pyramid-cone" id="pyramid-cone">
+                <i class="fa-solid fa-mountain pyramid-icon-main"></i>
+                <div class="pyramid-press-hint">
+                  <i class="fa-solid fa-hand-pointer"></i> 點擊搖骰釋放
+                </div>
+              </div>
+              
+              <!-- 開出的骰子展示口 -->
+              <div class="pyramid-tray" id="latest-die-box">
+                <div class="die-cube placeholder-cube">
+                  <i class="fa-solid fa-question"></i>
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-roll-pyramid" class="btn-board-action btn-gold-pyramid">
+              <i class="fa-solid fa-shuffle"></i> 搖動金字塔 (拿1金幣)
+            </button>
+
+            <!-- 本分段已開出骰子盤 (Dice Roll History Tray) -->
+            <div class="dice-history-tray">
+              <div class="tray-title"><i class="fa-solid fa-clipboard-list"></i> 本分段已擲出骰子：</div>
+              <div class="tray-dice-slots" id="dice-history-list">
+                <span class="no-dice-hint">本分段尚未出骰</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右翼賽道：第 7 格 與 第 8 格 -->
+          <div class="track-column track-right-col" id="track-col-right">
+            <!-- 由 JS 渲染第 7, 8 格 -->
+          </div>
+        </div>
+
+        <!-- 跑道下環：第 14 格 ~ 第 9 格 (逆向回到終點方向) -->
+        <div class="track-row track-bottom-row" id="track-row-bottom">
+          <!-- 由 JS 渲染第 14 ~ 9 格 -->
+        </div>
+
+      </section>
+
+      <!-- 桌遊右側側板：終極大賽投注區與沙漠板塊 (Overall Tents & Desert Tiles) -->
+      <aside class="board-side-panel board-right-panel">
+        
+        <!-- 總冠軍帳篷 -->
+        <div class="overall-tent winner-tent">
+          <div class="tent-header">
+            <h4><i class="fa-solid fa-award"></i> 總冠軍帳篷</h4>
+            <span class="tent-badge" id="winner-bets-count">已投: 0 張</span>
+          </div>
+          <p class="tent-desc">秘密預測最終總冠軍 (最高8金幣)</p>
+          <div class="tent-actions">
+            <select id="select-overall-winner" class="board-select"></select>
+            <button id="btn-bet-overall-winner" class="btn-board-action btn-tent-winner">
+              <i class="fa-solid fa-stamp"></i> 押總冠軍
+            </button>
+          </div>
+        </div>
+
+        <!-- 總墊底帳篷 -->
+        <div class="overall-tent loser-tent">
+          <div class="tent-header">
+            <h4><i class="fa-solid fa-skull"></i> 總墊底帳篷</h4>
+            <span class="tent-badge" id="loser-bets-count">已投: 0 張</span>
+          </div>
+          <p class="tent-desc">秘密預測最終倒數第一 (最高8金幣)</p>
+          <div class="tent-actions">
+            <select id="select-overall-loser" class="board-select"></select>
+            <button id="btn-bet-overall-loser" class="btn-board-action btn-tent-loser">
+              <i class="fa-solid fa-stamp"></i> 押總墊底
+            </button>
+          </div>
+        </div>
+
+        <!-- 沙漠板塊調度區 -->
+        <div class="desert-tent">
+          <div class="tent-header">
+            <h4><i class="fa-solid fa-campground"></i> 沙漠板塊調度</h4>
+          </div>
+          <p class="tent-desc">放置在無駱駝空格，踩中賺 1 金幣</p>
+          <div class="desert-type-toggle">
+            <label class="tile-radio">
+              <input type="radio" name="desert-type" value="oasis" checked>
+              <span class="radio-btn radio-oasis"><i class="fa-solid fa-droplet"></i> 綠洲 (+1)</span>
+            </label>
+            <label class="tile-radio">
+              <input type="radio" name="desert-type" value="mirage">
+              <span class="radio-btn radio-mirage"><i class="fa-solid fa-wind"></i> 幻象 (-1)</span>
+            </label>
+          </div>
+          <div class="desert-space-picker">
+            <label for="desert-target-space">目標賽道格：</label>
+            <select id="desert-target-space" class="board-select"></select>
+          </div>
+          <button id="btn-place-desert" class="btn-board-action btn-tent-desert">
+            <i class="fa-solid fa-location-dot"></i> 擺放板塊
+          </button>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <!-- 玩家桌位面板區 (Player Dashboards) -->
+    <section class="players-dashboard-section">
+      <div class="section-title">
+        <i class="fa-solid fa-users-viewfinder"></i> 玩家桌位與資產屏風
+      </div>
+      <div class="players-grid" id="players-grid">
+        <!-- 由 JavaScript 動態生成 4 位玩家的專屬牌桌與籌碼 -->
+      </div>
+    </section>
+
+    <!-- 賽事即時文字戰報 -->
+    <section class="game-broadcast-section">
+      <div class="section-title">
+        <span><i class="fa-solid fa-bullhorn"></i> 賽事實況轉播台</span>
+        <button id="btn-clear-log" class="btn-text-action"><i class="fa-solid fa-trash-can"></i> 清除廣播</button>
+      </div>
+      <div class="broadcast-console" id="game-log-box">
+        <!-- 動態文字戰報 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 程式下方版權標示：完全置中，已移除多餘標籤文字 -->
+  <footer class="game-footer">
+    <p class="copyright-text">
+      <i class="fa-regular fa-copyright"></i> Copyright © Liyuchiutiger Gongminshen
+    </p>
+  </footer>
+
+  <!-- 吉祥物元件：無框無對話框，懸停霓虹彩色發光抖動，可任意拖曳移動 -->
+  <div id="mascot-container" class="mascot-draggable" title="按住拖曳我！懸停有霓虹抖動特效！">
+    <img src="image/LiyuChillGuy.svg" alt="Liyu Chill Guy 吉祥物" class="mascot-image" id="mascot-img" draggable="false">
+  </div>
+
+  <!-- 分段結算彈出視窗 (Leg Modal) -->
+  <div class="modal-backdrop" id="modal-leg-summary" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-flag"></i> 分段賽結束結算！</h2>
+      </div>
+      <div class="modal-body" id="leg-summary-content">
+        <!-- 結算詳情動態注入 -->
+      </div>
+      <div class="modal-footer">
+        <button id="btn-next-leg" class="btn-board-action btn-gold-pyramid">
+          <i class="fa-solid fa-forward"></i> 開啟下一分段
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 終局大賽頒獎典禮 (GameOver Modal) -->
+  <div class="modal-backdrop" id="modal-game-over" style="display: none;">
+    <div class="modal-card modal-celebration">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-trophy text-gold"></i> 駱駝大賽光榮閉幕！</h2>
+      </div>
+      <div class="modal-body" id="game-over-content">
+        <!-- 終局排名與獎金結算動態注入 -->
+      </div>
+      <div class="modal-footer">
+        <button id="btn-play-again" class="btn-board-action btn-gold-pyramid">
+          <i class="fa-solid fa-rotate-right"></i> 再戰一局！
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 遊戲規則說明視窗 -->
+  <div class="modal-backdrop" id="modal-rules" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-book-open"></i> 《Camel Up Shen》桌遊規則說明</h2>
+        <button class="modal-close" id="btn-close-rules"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body rules-text-body">
+        <h4><i class="fa-solid fa-flag-checkered"></i> 遊戲目標</h4>
+        <p>成為身價最富有的玩家！每位玩家初始有 3 元金幣，輪流進行行動，透過精準下注與巧妙佈局賺取大把金幣！</p>
+        
+        <h4><i class="fa-solid fa-shapes"></i> 核心機制：駱駝堆疊乘載</h4>
+        <p>當駱駝走到同一個格子時，會直接騎乘在原本的駱駝背上！底層駱駝向前奔馳時，會將背上的所有駱駝一同運載前進！在同一個格子裡，疊在最上層的駱駝名次優先！</p>
+        
+        <h4><i class="fa-solid fa-list-check"></i> 輪到你的四選一行動</h4>
+        <ol>
+          <li><strong>金字塔搖骰：</strong>點擊中央金字塔釋放一顆骰子，移動對應駱駝 1~3 格，立即領取 1 金幣。當 5 顆骰子搖完時進行分段結算。</li>
+          <li><strong>分段第一名下注：</strong>從左側彩票架拿取該顏色當前最高面額彩票（5、3、2 金幣）。若該駱駝獲得分段第 1 名即可贏得相應獎金；第 2 名得 1 金幣；其餘名次倒扣 1 金幣。</li>
+          <li><strong>放置沙漠板塊：</strong>放置「綠洲 (+1)」或「幻象 (-1)」。有駱駝踩中你的板塊時，你立即賺取 1 金幣！不可放在起點、終點或已有駱駝與板塊的相鄰格。</li>
+          <li><strong>總冠軍與總墊底預測：</strong>整場比賽只有一隻總冠軍與一隻總墊底。越早於右側帳篷秘密投卡猜中，最高可得 8 金幣！猜錯倒扣 1 金幣。</li>
+        </ol>
+
+        <h4><i class="fa-solid fa-trophy"></i> 終局結束條件</h4>
+        <p>只要有任何一隻駱駝越過第 16 格終點線，比賽立即結束，並進行全場總清算！身價金幣最多的玩家奪冠！</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-ok-rules" class="btn-board-action btn-gold-pyramid">
+          <i class="fa-solid fa-check"></i> 我瞭解了，開始下注！
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 玩家人數配置視窗 (Player Setup Modal) -->
+  <div class="modal-backdrop" id="modal-player-setup" style="display: none;">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-users-gear"></i> 開局人數與參賽者設定</h2>
+        <button class="modal-close" id="btn-close-setup"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body setup-body">
+        <p style="color:var(--text-muted); margin-bottom:14px;">
+          自由設定真人玩家人數（同機輪流同樂），若總人數不足則自動由沙漠電腦 AI 補齊！
+        </p>
+
+        <div class="setup-controls-grid">
+          <div class="setup-field">
+            <label for="setup-total-players"><i class="fa-solid fa-users"></i> 總參賽人數 (2 ~ 6 人)：</label>
+            <select id="setup-total-players" class="board-select">
+              <option value="2">2 人賽</option>
+              <option value="3">3 人賽</option>
+              <option value="4" selected>4 人賽 (標準推薦)</option>
+              <option value="5">5 人賽</option>
+              <option value="6">6 人熱鬧大賽</option>
+            </select>
+          </div>
+
+          <div class="setup-field">
+            <label for="setup-human-players"><i class="fa-solid fa-user-check"></i> 真人玩家人數：</label>
+            <select id="setup-human-players" class="board-select">
+              <!-- 由 JS 依照總人數動態更新 -->
+            </select>
+          </div>
+        </div>
+
+        <div class="setup-names-container">
+          <h4 style="color:var(--color-sand); margin:12px 0 8px;"><i class="fa-solid fa-id-card"></i> 參賽者清單與稱呼預覽：</h4>
+          <div id="setup-players-list" class="setup-players-list">
+            <!-- 由 JS 動態生成每位玩家的名稱輸入欄與電腦標示 -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-confirm-setup" class="btn-board-action btn-gold-pyramid">
+          <i class="fa-solid fa-play"></i> 儲存配置並開創新局
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

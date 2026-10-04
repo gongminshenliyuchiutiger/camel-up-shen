@@ -1,0 +1,1300 @@
+/* ==========================================================================
+   Camel Up Shen - 100% 全景一屏完整呈現 桌遊樣式表
+   版權宣告：Copyright © Liyuchiutiger Gongminshen (置中呈現)
+   全面使用 Font Awesome，無一般 emoji
+   ========================================================================== */
+
+:root {
+  --bg-deep: #0f121a;
+  --bg-board-wood: #2a1f18;
+  --bg-board-sand: #d8b276;
+  --bg-card: #1c2230;
+  --bg-card-hover: #262e42;
+  
+  --color-sand: #f3c26b;
+  --color-sand-light: #fef0d2;
+  --color-gold: #ffd700;
+  --color-oasis: #00bcd4;
+  --color-mirage: #e65100;
+  --color-finish: #27ae60;
+  
+  /* 5 隻參賽駱駝木質積木標準色 */
+  --camel-red: #d32f2f;
+  --camel-blue: #1976d2;
+  --camel-green: #388e3c;
+  --camel-yellow: #fbc02d;
+  --camel-purple: #8e24aa;
+
+  --text-main: #f5f6fa;
+  --text-muted: #a4b0be;
+  --text-dark: #2d3436;
+  
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --border-gold: rgba(243, 194, 107, 0.4);
+  --border-board: #6d4c3d;
+
+  --shadow-board: 0 8px 25px rgba(0, 0, 0, 0.55);
+  --shadow-tile: 0 3px 6px rgba(0, 0, 0, 0.3);
+  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(circle at 50% 15%, #232c3f 0%, #0d1017 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 滾動條美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(243, 194, 107, 0.35);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(243, 194, 107, 0.65);
+}
+
+/* ==========================================================================
+   頂部導覽列 (Header) - 緊湊優化
+   ========================================================================== */
+.game-header {
+  background: rgba(15, 18, 26, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--border-gold);
+  padding: 6px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.main-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  background: linear-gradient(45deg, #ffd700, #ffae19, #f39c12);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-tool {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition-fast);
+  font-family: inherit;
+}
+
+.btn-tool:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--color-sand);
+  transform: translateY(-1px);
+}
+
+.btn-danger-soft:hover {
+  background: rgba(211, 47, 47, 0.2);
+  border-color: #d32f2f;
+  color: #ff7675;
+}
+
+/* ==========================================================================
+   桌遊主舞台容器 (Boardgame Stage) - 100% 完整呈現
+   ========================================================================== */
+.boardgame-stage {
+  max-width: 1520px;
+  margin: 0 auto;
+  padding: 8px 12px 10px;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* 頂部賽事即時指標條 */
+.game-status-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.status-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.status-chip i {
+  font-size: 1.05rem;
+  color: var(--color-sand);
+}
+
+.turn-chip i { color: #2ecc71; }
+.leader-chip i { color: var(--color-gold); }
+.race-chip i { color: #74b9ff; }
+
+.chip-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.chip-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   實體桌遊核心大版圖 (The Boardgame Table) - 緊湊比例
+   ========================================================================== */
+.boardgame-table {
+  display: grid;
+  grid-template-columns: 210px 1fr 240px;
+  gap: 10px;
+  background: #181c26;
+  border: 2px solid var(--border-board);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: var(--shadow-board);
+}
+
+/* 側板共用樣式 */
+.board-side-panel {
+  background: rgba(28, 34, 48, 0.95);
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-header {
+  border-bottom: 1px dashed var(--border-gold);
+  padding-bottom: 5px;
+}
+
+.panel-header h3 {
+  font-size: 0.95rem;
+  color: var(--color-sand);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.panel-subtitle {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* 左側：分段彩票板塊展示架 */
+.leg-tiles-rack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leg-rack-slot {
+  background: rgba(15, 18, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: var(--transition-fast);
+}
+
+.leg-slot-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.camel-color-badge {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.btn-leg-card {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  transition: var(--transition-fast);
+}
+
+.btn-leg-card:hover:not(:disabled) {
+  transform: scale(1.04);
+  box-shadow: 0 0 8px rgba(243, 156, 18, 0.6);
+}
+
+.btn-leg-card:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   中央版圖：環形賽道圍繞金字塔 (The Circuit & Pyramid Center)
+   ========================================================================== */
+.board-center-track {
+  background: radial-gradient(circle at 50% 50%, #3e2f20 0%, #1c140f 100%);
+  border: 2px solid #8e6245;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.65);
+}
+
+/* 環形賽道橫向排 (上環 1~6、下環 14~9) */
+.track-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+/* 環形賽道中段 (左列 16, 15 | 中央金字塔 | 右列 7, 8) */
+.track-middle-section {
+  display: grid;
+  grid-template-columns: 1fr 2.7fr 1fr;
+  gap: 8px;
+  align-items: stretch;
+  flex: 1;
+}
+
+/* 消除 7,8 與 15,16 的過大間隙：採用均勻伸展，上下格子緊密連接 */
+.track-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: stretch;
+}
+
+.track-column .circuit-tile {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+/* 單一賽道格子 (Board Tile) - 彈性自適應，防止駱駝溢出 */
+.circuit-tile {
+  background: #ecd5a5;
+  color: var(--text-dark);
+  border: 2px solid #9e7943;
+  border-radius: 8px;
+  min-height: 84px;
+  padding: 3px 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-tile);
+  transition: var(--transition-fast);
+  overflow: visible;
+}
+
+.circuit-tile:hover {
+  background: #f7e2b7;
+  border-color: #ffd700;
+}
+
+.circuit-tile.tile-is-start {
+  background: #d4ebd0;
+  border-color: #27ae60;
+}
+
+.circuit-tile.tile-is-finish {
+  background: repeating-linear-gradient(
+    45deg,
+    #2c3e50,
+    #2c3e50 8px,
+    #ecf0f1 8px,
+    #ecf0f1 16px
+  );
+  color: #fff;
+  border-color: #e74c3c;
+  border-width: 2px;
+}
+
+.circuit-tile.tile-is-finish .tile-number-banner {
+  background: rgba(0, 0, 0, 0.85);
+  color: #f1c40f;
+}
+
+.tile-number-banner {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: rgba(60, 40, 20, 0.2);
+  padding: 1px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circuit-modifier {
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mod-oasis {
+  background: #00bcd4;
+  color: #fff;
+}
+
+.mod-mirage {
+  background: #ff7043;
+  color: #fff;
+}
+
+/* 駱駝積木堆疊槽 - 仿桌遊卡榫緊湊嵌合，多隻堆疊不溢出 */
+.camels-block-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: auto;
+  position: relative;
+}
+
+.camel-wood-block {
+  width: 98%;
+  height: 18px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: default;
+  margin-top: -3px; /* 嵌合堆疊 */
+  position: relative;
+  flex-shrink: 0;
+}
+
+.camel-wood-block:last-child {
+  margin-top: 0;
+}
+
+/* 當堆疊超過 3 隻駱駝時進一步緊湊壓縮，完全不超框 */
+.camels-block-stack.stack-crowded .camel-wood-block {
+  height: 16px;
+  font-size: 0.6rem;
+  padding: 0 3px;
+  margin-top: -4px;
+}
+.camels-block-stack.stack-crowded .camel-wood-block:last-child {
+  margin-top: 0;
+}
+
+.camel-wood-block.camel-red { background: linear-gradient(180deg, #e74c3c, #c0392b); }
+.camel-wood-block.camel-blue { background: linear-gradient(180deg, #3498db, #2980b9); }
+.camel-wood-block.camel-green { background: linear-gradient(180deg, #2ecc71, #27ae60); }
+.camel-wood-block.camel-yellow { background: linear-gradient(180deg, #f1c40f, #d4ac0d); color: #222; }
+.camel-wood-block.camel-purple { background: linear-gradient(180deg, #9b59b6, #8e44ad); }
+
+.stack-level-badge {
+  font-size: 0.6rem;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+/* ==========================================================================
+   中央金字塔沙丘核心 (Pyramid Centerpiece) - 緊湊高質感
+   ========================================================================== */
+.pyramid-centerpiece {
+  background: radial-gradient(circle at 50% 40%, rgba(243, 194, 107, 0.12) 0%, rgba(0, 0, 0, 0.5) 85%);
+  border: 2px dashed rgba(243, 194, 107, 0.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.pyramid-tent-label {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-sand);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pyramid-3d-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.pyramid-cone {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.pyramid-cone:hover {
+  transform: scale(1.05);
+}
+
+.pyramid-icon-main {
+  font-size: 2.6rem;
+  color: #e67e22;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+}
+
+.pyramid-icon-main.shaking {
+  animation: pyramid-shake 0.5s infinite ease-in-out;
+}
+
+@keyframes pyramid-shake {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) scale(1.1); }
+  50% { transform: rotate(8deg) scale(1.05); }
+  75% { transform: rotate(-5deg) scale(1.12); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.pyramid-press-hint {
+  font-size: 0.68rem;
+  color: var(--color-sand-light);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pyramid-tray {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.die-cube {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.die-cube.die-pop {
+  animation: die-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes die-pop {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  80% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.placeholder-cube {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+.btn-board-action {
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: inherit;
+  transition: var(--transition-fast);
+}
+
+.btn-board-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-gold-pyramid {
+  background: linear-gradient(135deg, #f39c12, #d35400);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.4);
+}
+
+.btn-gold-pyramid:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.6);
+}
+
+.dice-history-tray {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.tray-title {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tray-dice-slots {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  min-height: 20px;
+  align-items: center;
+}
+
+.tray-die-pill {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #fff;
+}
+
+.no-dice-hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   右側側板：終極大賽帳篷與沙漠調度 (Overall Tents & Desert)
+   ========================================================================== */
+.overall-tent, .desert-tent {
+  background: rgba(15, 18, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tent-header h4 {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.winner-tent h4 { color: var(--color-gold); }
+.loser-tent h4 { color: #bdc3c7; }
+.desert-tent h4 { color: var(--color-sand); }
+
+.tent-badge {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.tent-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.tent-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.board-select {
+  width: 100%;
+  padding: 5px 6px;
+  background: #141720;
+  border: 1px solid var(--border-gold);
+  border-radius: 5px;
+  color: var(--text-main);
+  font-size: 0.78rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn-tent-winner {
+  background: linear-gradient(135deg, #f1c40f, #e67e22);
+  color: #222;
+  white-space: nowrap;
+  width: auto;
+  padding: 5px 10px;
+}
+
+.btn-tent-loser {
+  background: linear-gradient(135deg, #7f8c8d, #34495e);
+  color: #fff;
+  white-space: nowrap;
+  width: auto;
+  padding: 5px 10px;
+}
+
+.desert-type-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.tile-radio {
+  flex: 1;
+  cursor: pointer;
+}
+
+.tile-radio input {
+  display: none;
+}
+
+.radio-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: var(--transition-fast);
+}
+
+.radio-oasis { color: #00bcd4; }
+.radio-mirage { color: #ff7043; }
+
+.tile-radio input:checked + .radio-oasis {
+  background: rgba(0, 188, 212, 0.25);
+  border-color: #00bcd4;
+}
+
+.tile-radio input:checked + .radio-mirage {
+  background: rgba(255, 112, 67, 0.25);
+  border-color: #ff7043;
+}
+
+.desert-space-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.desert-space-picker label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.btn-tent-desert {
+  background: linear-gradient(135deg, #00b4db, #0083b0);
+  color: #fff;
+}
+
+/* ==========================================================================
+   玩家桌位面板區 (Player Dashboards) - 緊湊高度
+   ========================================================================== */
+.players-dashboard-section {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.section-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-sand-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+}
+
+.player-board-card {
+  background: #131722;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: var(--transition-fast);
+}
+
+.player-board-card.active-turn {
+  border-color: #2ecc71;
+  background: #172422;
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.35);
+}
+
+.player-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-tag {
+  font-size: 0.68rem;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.tag-human {
+  background: rgba(52, 152, 219, 0.25);
+  color: #74b9ff;
+  border: 1px solid rgba(52, 152, 219, 0.4);
+}
+
+.tag-ai {
+  background: rgba(155, 89, 182, 0.25);
+  color: #d299ea;
+  border: 1px solid rgba(155, 89, 182, 0.4);
+}
+
+.player-name-text {
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+.player-purse {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--color-gold);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.player-assets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.asset-pill {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ==========================================================================
+   即時戰報區 (Game Broadcast) - 緊湊高度
+   ========================================================================== */
+.game-broadcast-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 5px 12px;
+}
+
+.btn-text-action {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.btn-text-action:hover {
+  color: #ff7675;
+}
+
+.broadcast-console {
+  height: 48px;
+  overflow-y: auto;
+  background: #0b0d14;
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.broadcast-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.broadcast-time {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.broadcast-msg {
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   頁尾版權區 (Footer) - 要求：完全置中
+   ========================================================================== */
+.game-footer {
+  background: #0b0d14;
+  border-top: 1px solid var(--border-subtle);
+  padding: 6px 14px;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.copyright-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-sand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   吉祥物 (Mascot): 無框無對話框, 懸停霓虹彩色發光抖動, 支援任意移動拖曳
+   ========================================================================== */
+.mascot-draggable {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 9999;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  display: inline-block;
+  transition: transform 0.1s ease;
+  background: transparent;
+  border: none;
+}
+
+.mascot-draggable:active {
+  cursor: grabbing;
+}
+
+.mascot-image {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mascot-draggable:hover .mascot-image {
+  animation: neon-svg-glow 1.2s infinite alternate, neon-shake 0.32s infinite ease-in-out;
+  transform: scale(1.08);
+}
+
+@keyframes neon-svg-glow {
+  0% {
+    filter: drop-shadow(0 0 5px #ff007f) drop-shadow(0 0 14px #ff007f) drop-shadow(0 0 24px rgba(255, 0, 127, 0.7));
+  }
+  25% {
+    filter: drop-shadow(0 0 5px #00f3ff) drop-shadow(0 0 14px #00f3ff) drop-shadow(0 0 24px rgba(0, 243, 255, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 5px #00ff66) drop-shadow(0 0 14px #00ff66) drop-shadow(0 0 24px rgba(0, 255, 102, 0.7));
+  }
+  75% {
+    filter: drop-shadow(0 0 5px #ffff00) drop-shadow(0 0 14px #ffff00) drop-shadow(0 0 24px rgba(255, 255, 0, 0.7));
+  }
+  100% {
+    filter: drop-shadow(0 0 5px #b026ff) drop-shadow(0 0 16px #b026ff) drop-shadow(0 0 28px rgba(176, 38, 255, 0.8));
+  }
+}
+
+@keyframes neon-shake {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-2px, 1px) rotate(-3deg); }
+  40% { transform: translate(2px, -1px) rotate(3deg); }
+  60% { transform: translate(-1px, -1px) rotate(-1.5deg); }
+  80% { transform: translate(1px, 1px) rotate(2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* ==========================================================================
+   開局玩家人數設定視窗 (Player Setup Modal)
+   ========================================================================== */
+.setup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.setup-controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.setup-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setup-field label {
+  font-size: 0.82rem;
+  color: var(--color-sand-light);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.setup-players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(10, 13, 20, 0.6);
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.setup-player-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+}
+
+.setup-player-index {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--color-sand);
+  width: 22px;
+}
+
+.setup-player-type-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.setup-player-input {
+  flex: 1;
+  padding: 5px 8px;
+  background: #141720;
+  border: 1px solid var(--border-gold);
+  border-radius: 5px;
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.setup-player-input:focus {
+  border-color: #ffd700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+.setup-player-ai-text {
+  flex: 1;
+  color: #d299ea;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   彈出視窗 (Modal Windows)
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 14px;
+}
+
+.modal-card {
+  background: #1c2230;
+  border: 2px solid var(--border-gold);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+}
+
+.modal-wide {
+  max-width: 620px;
+}
+
+.modal-header {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  color: var(--color-sand-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 14px 16px;
+  overflow-y: auto;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.rules-text-body h4 {
+  color: var(--color-sand);
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rules-text-body h4:first-child {
+  margin-top: 0;
+}
+
+.rules-text-body ol {
+  padding-left: 18px;
+}
+
+.modal-footer {
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.summary-score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.score-gain { color: #2ecc71; font-weight: 700; }
+.score-loss { color: #e74c3c; font-weight: 700; }
+
+.text-gold { color: var(--color-gold); }
+.text-oasis { color: var(--color-oasis); }
+.text-mirage { color: var(--color-mirage); }
+
+/* ==========================================================================
+   響應式設計 (Responsive Design)
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .boardgame-table {
+    grid-template-columns: 190px 1fr 220px;
+  }
+}
+
+@media (max-width: 992px) {
+  .boardgame-table {
+    grid-template-columns: 1fr;
+  }
+  .board-side-panel {
+    order: 2;
+  }
+  .board-center-track {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-header {
+    padding: 8px 12px;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .header-controls {
+    justify-content: center;
+  }
+  .track-middle-section {
+    grid-template-columns: 1fr;
+  }
+  .track-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .mascot-image {
+    width: 65px;
+    height: 65px;
+  }
+}
